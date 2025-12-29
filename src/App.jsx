@@ -75,10 +75,15 @@ const DetalleDeuda = ({ deudas, readonly }) => {
   };
 
   const copiarLink = () => {
-    const link = `${window.location.origin}/compartir/${id}`;
-    navigator.clipboard.writeText(link);
-    alert("Enlace de vista copiado para WhatsApp");
-  };
+  const link = `${window.location.origin}/compartir/${id}`;
+  
+  navigator.clipboard.writeText(link).then(() => {
+    alert("✅ Enlace de vista copiado. Ya puedes pegarlo en WhatsApp.");
+  }).catch(err => {
+    console.error('Error al copiar: ', err);
+    alert("Enlace: " + link);
+  });
+};
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center p-4 md:p-8 animate-in fade-in duration-500">
@@ -241,7 +246,6 @@ const Home = ({ deudas, setDeudaSeleccionada }) => {
   );
 };
 
-// --- APP COMPONENT (ROOT) ---
 export default function App() {
   const [deudas, setDeudas] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -263,20 +267,22 @@ export default function App() {
   return (
     <div style={fondoStyle} className="min-h-screen font-sans">
       <Routes>
-        {/* Vista Compartida (Sin PIN) */}
         <Route path="/compartir/:id" element={<DetalleDeuda deudas={deudas} readonly={true} />} />
-        
-        {/* Vista Admin (Con PIN) */}
-        <Route path="/*" element={
-          !isAuthenticated 
-            ? <Login onAuth={setIsAuthenticated} /> 
-            : (
+        <Route 
+          path="*" 
+          element={
+            !isAuthenticated ? (
+              <Login onAuth={setIsAuthenticated} />
+            ) : (
               <Routes>
                 <Route path="/" element={<Home deudas={deudas} />} />
                 <Route path="/deuda/:id" element={<DetalleDeuda deudas={deudas} readonly={false} />} />
+                {/* Redirección por si acaso escribe mal la URL */}
+                <Route path="*" element={<Link to="/" className="text-white p-10 block text-center uppercase font-black">Página no encontrada - Volver al inicio</Link>} />
               </Routes>
             )
-        } />
+          } 
+        />
       </Routes>
     </div>
   );
