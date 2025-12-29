@@ -7,7 +7,7 @@ import { Plus, ChevronLeft, Trash2, Edit2, X, Share2, Lock } from 'lucide-react'
 // --- COMPONENTE DE ACCESO (PIN) ---
 const Login = ({ onAuth }) => {
   const [pin, setPin] = useState('');
-  const PIN_CORRECTO = "1010";
+  const PIN_CORRECTO = "1608";
 
   const handleInput = (e) => {
     const val = e.target.value;
